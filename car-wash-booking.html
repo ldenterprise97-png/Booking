@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Car Wash</title>
+    <!-- EmailJS for sending email notifications -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
+            min-height: 100vh;
+            color: #e2e8f0;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #3b82f6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.125rem;
+        }
+
+        .booking-card {
+            background: #1e293b;
+            border-radius: 1rem;
+            padding: 2.5rem;
+            border: 1px solid #334155;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+        }
+
+        label .required {
+            color: #ef4444;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(to right, #3b82f6, #06b6d4);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(to right, #2563eb, #0891b2);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            display: none;
+            background: #059669;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #93c5fd;
+            font-size: 0.875rem;
+        }
+
+        .info-box strong {
+            color: #60a5fa;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .service-option {
+            background: #0f172a;
+            border: 2px solid #475569;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .service-option:hover {
+            border-color: #3b82f6;
+        }
+
+        .service-option.selected {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .service-option input[type="radio"] {
+            margin-right: 0.75rem;
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: #e2e8f0;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .service-price {
+            color: #60a5fa;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .service-description {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .location-option {
+            background: #0f172a;
+            border: 2px solid #475569;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .location-option:hover {
+            border-color: #3b82f6;
+        }
+
+        .location-option.selected {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .location-option input[type="radio"] {
+            margin-right: 0.75rem;
+        }
+
+        .location-text {
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+
+        @media (max-width: 640px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-card {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🚗💧</div>
+            <h1>Book Your Car Wash</h1>
+            <p class="subtitle">Professional car wash service</p>
+        </div>
+
+        <div id="successMessage" class="success-message">
+            ✓ Your car wash has been scheduled! We'll contact you to confirm.
+        </div>
+
+        <div class="booking-card">
+            <form id="bookingForm" onsubmit="handleBooking(event)">
+                <!-- Contact Information -->
+                <div class="form-section">
+                    <h2 class="section-title">📋 Your Information</h2>
+                    
+                    <div class="form-group">
+                        <label>First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" required placeholder="Your first name">
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="phone" required placeholder="(555) 123-4567">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email <span class="required">*</span></label>
+                            <input type="email" id="email" required placeholder="your@email.com">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Choice -->
+                <div class="form-section">
+                    <h2 class="section-title">📍 Service Location</h2>
+
+                    <label class="service-option" onclick="selectLocation('mobile')">
+                        <input type="radio" name="location" value="mobile" id="location-mobile" required>
+                        <div style="display: inline-block; width: calc(100% - 2rem); vertical-align: top;">
+                            <div class="service-name">Mobile Service</div>
+                            <div class="service-description">We come to you at your location<br>(Using YOUR water)</div>
+                        </div>
+                    </label>
+
+                    <label class="service-option" onclick="selectLocation('dropoff')">
+                        <input type="radio" name="location" value="dropoff" id="location-dropoff" required>
+                        <div style="display: inline-block; width: calc(100% - 2rem); vertical-align: top;">
+                            <div class="service-name">Drop-off Service</div>
+                            <div class="service-description">Drop off at driveway (House Number 28)</div>
+                        </div>
+                    </label>
+
+                    <!-- Address field - shows only for Mobile Service -->
+                    <div id="addressField" style="display: none; margin-top: 1.5rem;">
+                        <label>Address <span class="required">*</span></label>
+                        <input type="text" id="address" placeholder="Enter your address">
+                    </div>
+                </div>
+
+                <!-- Service Selection -->
+                <div class="form-section">
+                    <h2 class="section-title">💧 Select Service</h2>
+                    
+                    <div class="info-box">
+                        <strong>Choose your package</strong> – Professional car wash service at your convenience
+                    </div>
+
+                    <label class="service-option" onclick="selectService('a')">
+                        <input type="radio" name="service" value="a" id="service-a" required>
+                        <div style="display: inline-block; width: calc(100% - 2rem); vertical-align: top;">
+                            <div class="service-name">Package A - Interior Detail</div>
+                            <div class="service-price">$40</div>
+                            <div class="service-description">Full interior vacuum, glass cleaning, seat scrub, interior surface wipe down, deodorize</div>
+                        </div>
+                    </label>
+
+                    <label class="service-option" onclick="selectService('b')">
+                        <input type="radio" name="service" value="b" id="service-b" required>
+                        <div style="display: inline-block; width: calc(100% - 2rem); vertical-align: top;">
+                            <div class="service-name">Package B - Exterior Wash</div>
+                            <div class="service-price">$40</div>
+                            <div class="service-description">Wash, dry, wheels cleaned, tire shine</div>
+                        </div>
+                    </label>
+
+                    <label class="service-option" onclick="selectService('c')">
+                        <input type="radio" name="service" value="c" id="service-c" required>
+                        <div style="display: inline-block; width: calc(100% - 2rem); vertical-align: top;">
+                            <div class="service-name">Package C - Full Service</div>
+                            <div class="service-price">$70</div>
+                            <div class="service-description">Complete interior detail + exterior wash (Full A + B Package)</div>
+                        </div>
+                    </label>
+
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label>Select Your Appointment <span class="required">*</span></label>
+                        <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <span style="font-size: 1.25rem;">📅</span>
+                                <span style="color: #93c5fd; font-size: 0.875rem; font-weight: 500;">Available Times</span>
+                            </div>
+                            <div style="color: #cbd5e1; font-size: 0.875rem; line-height: 1.6;">
+                                • <strong style="color: #60a5fa;">Weekends only</strong> (Saturday & Sunday)<br>
+                                • <strong style="color: #60a5fa;">10:00 AM - 3:30 PM</strong><br>
+                                • Minimum 3 hours between appointments
+                            </div>
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div>
+                                <label style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">Date</label>
+                                <select id="appointmentDate" required style="font-size: 1rem; padding: 0.875rem;">
+                                    <option value="">Select a date...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">Time</label>
+                                <select id="appointmentTime" required style="font-size: 1rem; padding: 0.875rem;">
+                                    <option value="">Select a time...</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="10:30">10:30 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="11:30">11:30 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="12:30">12:30 PM</option>
+                                    <option value="13:00">1:00 PM</option>
+                                    <option value="13:30">1:30 PM</option>
+                                    <option value="14:00">2:00 PM</option>
+                                    <option value="14:30">2:30 PM</option>
+                                    <option value="15:00">3:00 PM</option>
+                                    <option value="15:30">3:30 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Instructions -->
+                <div class="form-section">
+                    <h2 class="section-title">📝 Special Instructions</h2>
+                    
+                    <div class="form-group">
+                        <label>Additional Notes</label>
+                        <textarea id="notes" placeholder="Any special requests or instructions..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="form-section">
+                    <h2 class="section-title">💳 Payments I Accept</h2>
+                    
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div style="background: #0f172a; border: 2px solid #475569; border-radius: 0.5rem; padding: 1rem 1.5rem; text-align: center; flex: 1; min-width: 120px;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">💵</div>
+                            <div style="font-weight: 600; color: #e2e8f0;">Cash</div>
+                        </div>
+                        <div style="background: #0f172a; border: 2px solid #475569; border-radius: 0.5rem; padding: 1rem 1.5rem; text-align: center; flex: 1; min-width: 120px;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📱</div>
+                            <div style="font-weight: 600; color: #e2e8f0;">Venmo</div>
+                        </div>
+                        <div style="background: #0f172a; border: 2px solid #475569; border-radius: 0.5rem; padding: 1rem 1.5rem; text-align: center; flex: 1; min-width: 120px;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">✅</div>
+                            <div style="font-weight: 600; color: #e2e8f0;">Checks</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Schedule My Car Wash →
+                </button>
+            </form>
+        </div>
+
+    <script>
+        // Initialize EmailJS - wait for it to load
+        (function() {
+            // Check if emailjs is loaded
+            if (typeof emailjs === 'undefined') {
+                console.error('EmailJS library failed to load!');
+                return;
+            }
+            emailjs.init('X3TAUDcHC9Y9lvVFP');
+            console.log('✅ EmailJS initialized successfully');
+        })();
+
+        // Populate next 8 weekend dates
+        function populateWeekendDates() {
+            const dateSelect = document.getElementById('appointmentDate');
+            const today = new Date();
+            let weekendsAdded = 0;
+            let daysChecked = 0;
+            
+            while (weekendsAdded < 8 && daysChecked < 60) {
+                const checkDate = new Date(today);
+                checkDate.setDate(today.getDate() + daysChecked);
+                const day = checkDate.getDay();
+                
+                // If Saturday (6) or Sunday (0)
+                if (day === 0 || day === 6) {
+                    const dateString = checkDate.toISOString().split('T')[0]; // YYYY-MM-DD
+                    const displayString = checkDate.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                    
+                    const option = document.createElement('option');
+                    option.value = dateString;
+                    option.textContent = displayString;
+                    dateSelect.appendChild(option);
+                    
+                    weekendsAdded++;
+                }
+                daysChecked++;
+            }
+        }
+
+        // Initialize date dropdown on page load
+        populateWeekendDates();
+
+        function selectService(serviceType) {
+            document.querySelectorAll('.service-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            const clickedOption = document.getElementById('service-' + serviceType).closest('.service-option');
+            clickedOption.classList.add('selected');
+        }
+
+        function selectLocation(locationType) {
+            document.querySelectorAll('.service-option').forEach(opt => {
+                // Only clear selection for location options, not service packages
+                if (opt.querySelector('input[name="location"]')) {
+                    opt.classList.remove('selected');
+                }
+            });
+            const clickedOption = document.getElementById('location-' + locationType).closest('.service-option');
+            clickedOption.classList.add('selected');
+
+            // Show/hide address field based on selection
+            const addressField = document.getElementById('addressField');
+            const addressInput = document.getElementById('address');
+            
+            if (locationType === 'mobile') {
+                addressField.style.display = 'block';
+                addressInput.required = true;
+            } else {
+                addressField.style.display = 'none';
+                addressInput.required = false;
+                addressInput.value = ''; // Clear the field
+            }
+        }
+
+        function handleBooking(event) {
+            event.preventDefault();
+
+            // Get selected date and time
+            const dateValue = document.getElementById('appointmentDate').value;
+            const timeValue = document.getElementById('appointmentTime').value;
+            
+            if (!dateValue || !timeValue) {
+                alert('⚠️ Please select both a date and time for your appointment.');
+                return;
+            }
+
+            // Combine date and time into ISO format
+            const appointmentDateTime = dateValue + 'T' + timeValue + ':00';
+            const selectedDate = new Date(appointmentDateTime);
+
+            // Check for conflicts with existing bookings (3 hour buffer AFTER)
+            const existingBookings = JSON.parse(localStorage.getItem('carWashBookings') || '[]');
+            const selectedTime = selectedDate.getTime();
+            const threeHoursInMs = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+
+            for (const booking of existingBookings) {
+                if (booking.status === 'active' && booking.appointmentDateTime) {
+                    const bookedTime = new Date(booking.appointmentDateTime).getTime();
+                    
+                    // Check if selected time is within 3 hours AFTER an existing booking
+                    if (selectedTime > bookedTime && selectedTime < (bookedTime + threeHoursInMs)) {
+                        const bookedDateFormatted = new Date(booking.appointmentDateTime).toLocaleString('en-US', {
+                            weekday: 'short',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        alert('⚠️ This time slot is unavailable. There is already a booking at ' + bookedDateFormatted + '. Please select a time at least 3 hours after this appointment.');
+                        return;
+                    }
+                }
+            }
+
+            // Get selected service
+            const serviceRadio = document.querySelector('input[name="service"]:checked');
+            const serviceName = serviceRadio.value;
+            const serviceLabels = {
+                'a': 'Package A - Interior Detail - $40',
+                'b': 'Package B - Exterior Wash - $40',
+                'c': 'Package C - Full Service - $70'
+            };
+
+            // Get selected location
+            const locationRadio = document.querySelector('input[name="location"]:checked');
+            const locationValue = locationRadio.value;
+            const locationLabels = {
+                'mobile': 'Mobile Service (We come to you)',
+                'dropoff': 'Drop off at driveway (House Number 28)'
+            };
+
+            // Collect form data
+            const bookingData = {
+                id: Date.now(),
+                firstName: document.getElementById('firstName').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                location: locationLabels[locationValue],
+                address: locationValue === 'mobile' ? document.getElementById('address').value : '',
+                service: serviceLabels[serviceName],
+                appointmentDateTime: appointmentDateTime,
+                notes: document.getElementById('notes').value,
+                status: 'active'
+            };
+
+            // Add new booking
+            existingBookings.push(bookingData);
+            localStorage.setItem('carWashBookings', JSON.stringify(existingBookings));
+
+            // Send email notification to customer
+            const formattedDateTime = selectedDate.toLocaleString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            // Prepare email parameters
+            const emailParams = {
+                customer_name: bookingData.firstName,
+                customer_email: document.getElementById('email').value,
+                customer_phone: bookingData.phone,
+                service_type: serviceLabels[serviceName],
+                location_type: locationLabels[locationValue],
+                address: bookingData.address || 'N/A',
+                appointment_datetime: formattedDateTime,
+                notes: bookingData.notes || 'None'
+            };
+
+            // Send email using EmailJS
+            console.log('Attempting to send email with these details:');
+            console.log('- Customer Email:', emailParams.customer_email);
+            console.log('- Customer Name:', emailParams.customer_name);
+            console.log('- Service:', emailParams.service_type);
+            console.log('- Date/Time:', emailParams.appointment_datetime);
+            
+            // Check if EmailJS is loaded
+            if (typeof emailjs === 'undefined') {
+                alert('⚠️ Email service not loaded. Booking saved, but no confirmation email sent.');
+                console.error('EmailJS library not loaded');
+            } else {
+                emailjs.send('service_gq3je1g', 'template_bdusmop', emailParams)
+                    .then(function(response) {
+                        console.log('✅ Email sent successfully!', response.status, response.text);
+                        alert('✅ Booking confirmed! Check your email at ' + emailParams.customer_email + ' for confirmation.');
+                    }, function(error) {
+                        console.error('❌ Email failed to send.');
+                        console.error('Error status:', error.status);
+                        console.error('Error text:', error.text);
+                        alert('⚠️ Booking saved, but email failed.\n\nError: ' + error.text + '\nStatus: ' + error.status);
+                    });
+            }
+
+            // Update success message
+            const successMsg = document.getElementById('successMessage');
+            successMsg.innerHTML = '✓ Booking confirmed! Your <strong>' + serviceLabels[serviceName] + '</strong> is scheduled. We\'ll see you soon!';
+            successMsg.classList.add('show');
+            
+            // Reset form
+            document.getElementById('bookingForm').reset();
+            document.querySelectorAll('.service-option, .location-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Scroll to top to see success message
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Hide success message after 8 seconds
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 8000);
+        }
+    </script>
+</body>
+</html>

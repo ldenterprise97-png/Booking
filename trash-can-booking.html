@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Trash Can Cleaning</title>
+    <!-- EmailJS for sending email notifications -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
+            min-height: 100vh;
+            color: #e2e8f0;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.125rem;
+        }
+
+        .booking-card {
+            background: #1e293b;
+            border-radius: 1rem;
+            padding: 2.5rem;
+            border: 1px solid #334155;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #34d399;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+        }
+
+        label .required {
+            color: #ef4444;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(to right, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            display: none;
+            background: #059669;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #6ee7b7;
+            font-size: 0.875rem;
+        }
+
+        .info-box strong {
+            color: #34d399;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .service-option {
+            background: #0f172a;
+            border: 2px solid #475569;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .service-option:hover {
+            border-color: #10b981;
+        }
+
+        .service-option.selected {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .service-option input[type="radio"] {
+            margin-right: 0.75rem;
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: #e2e8f0;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .service-price {
+            color: #34d399;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .service-description {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-card {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🗑️✨</div>
+            <h1>Trash Can Cleaning</h1>
+            <p class="subtitle">Professional trash can cleaning service</p>
+        </div>
+
+        <div id="successMessage" class="success-message">
+            ✓ Your trash can cleaning has been scheduled! We'll contact you to confirm.
+        </div>
+
+        <div class="booking-card">
+            <form id="bookingForm" onsubmit="handleBooking(event)">
+                <!-- Contact Information -->
+                <div class="form-section">
+                    <h2 class="section-title">📋 Your Information</h2>
+                    
+                    <div class="form-group">
+                        <label>First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" required placeholder="Your first name">
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="phone" required placeholder="(555) 123-4567">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email <span class="required">*</span></label>
+                            <input type="email" id="email" required placeholder="your@email.com">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Location -->
+                <div class="form-section">
+                    <h2 class="section-title">📍 Service Location</h2>
+
+                    <div class="info-box">
+                        <strong>We come to you!</strong> Our mobile service brings professional trash can cleaning directly to your location.<br>(Using YOUR water)
+                    </div>
+
+                    <div class="form-group">
+                        <label>Address <span class="required">*</span></label>
+                        <input type="text" id="address" required placeholder="Street address">
+                    </div>
+                </div>
+
+                <!-- Service Selection -->
+                <div class="form-section">
+                    <h2 class="section-title">🗑️ Select Package</h2>
+                    
+                    <div class="info-box">
+                        <strong>Professional cleaning service</strong> – We clean your trash cans so you don't have to
+                    </div>
+
+                    <label class="service-option" onclick="selectService('a')">
+                        <input type="radio" name="service" value="a" id="service-a" required>
+                        <div style="display: inline-block; width: calc(100% - 2rem); vertical-align: top;">
+                            <div class="service-name">Package A - Single Can</div>
+                            <div class="service-price">$15</div>
+                            <div class="service-description">Soap and scrub, rinse, sanitize, deodorize</div>
+                        </div>
+                    </label>
+
+                    <label class="service-option" onclick="selectService('b')">
+                        <input type="radio" name="service" value="b" id="service-b" required>
+                        <div style="display: inline-block; width: calc(100% - 2rem); vertical-align: top;">
+                            <div class="service-name">Package B - Two Cans</div>
+                            <div class="service-price">$25</div>
+                            <div class="service-description">Full A package × 2 (two trash cans cleaned)</div>
+                        </div>
+                    </label>
+
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label>Select Your Appointment <span class="required">*</span></label>
+                        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <span style="font-size: 1.25rem;">📅</span>
+                                <span style="color: #6ee7b7; font-size: 0.875rem; font-weight: 500;">Available Times</span>
+                            </div>
+                            <div style="color: #cbd5e1; font-size: 0.875rem; line-height: 1.6;">
+                                • <strong style="color: #34d399;">Tuesdays only</strong><br>
+                                • <strong style="color: #34d399;">4:30 PM - 6:30 PM</strong><br>
+                                • Minimum 45 minutes between appointments
+                            </div>
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div>
+                                <label style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">Date</label>
+                                <select id="appointmentDate" required style="font-size: 1rem; padding: 0.875rem;">
+                                    <option value="">Select a date...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">Time</label>
+                                <select id="appointmentTime" required style="font-size: 1rem; padding: 0.875rem;">
+                                    <option value="">Select a time...</option>
+                                    <option value="16:30">4:30 PM</option>
+                                    <option value="17:00">5:00 PM</option>
+                                    <option value="17:30">5:30 PM</option>
+                                    <option value="18:00">6:00 PM</option>
+                                    <option value="18:30">6:30 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special Instructions -->
+                <div class="form-section">
+                    <h2 class="section-title">📝 Special Instructions</h2>
+                    
+                    <div class="form-group">
+                        <label>Additional Notes</label>
+                        <textarea id="notes" placeholder="Gate codes, trash can location, special requests..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="form-section">
+                    <h2 class="section-title">💳 Payments I Accept</h2>
+                    
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div style="background: #0f172a; border: 2px solid #475569; border-radius: 0.5rem; padding: 1rem 1.5rem; text-align: center; flex: 1; min-width: 120px;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">💵</div>
+                            <div style="font-weight: 600; color: #e2e8f0;">Cash</div>
+                        </div>
+                        <div style="background: #0f172a; border: 2px solid #475569; border-radius: 0.5rem; padding: 1rem 1.5rem; text-align: center; flex: 1; min-width: 120px;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📱</div>
+                            <div style="font-weight: 600; color: #e2e8f0;">Venmo</div>
+                        </div>
+                        <div style="background: #0f172a; border: 2px solid #475569; border-radius: 0.5rem; padding: 1rem 1.5rem; text-align: center; flex: 1; min-width: 120px;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">✅</div>
+                            <div style="font-weight: 600; color: #e2e8f0;">Checks</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Schedule My Cleaning →
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize EmailJS
+        (function() {
+            if (typeof emailjs === 'undefined') {
+                console.error('EmailJS library failed to load!');
+                return;
+            }
+            emailjs.init('X3TAUDcHC9Y9lvVFP');
+            console.log('✅ EmailJS initialized successfully');
+        })();
+
+        // Populate next 8 Tuesdays
+        function populateWeekendDates() {
+            const dateSelect = document.getElementById('appointmentDate');
+            const today = new Date();
+            let tuesdaysAdded = 0;
+            let daysChecked = 0;
+            
+            while (tuesdaysAdded < 8 && daysChecked < 60) {
+                const checkDate = new Date(today);
+                checkDate.setDate(today.getDate() + daysChecked);
+                const day = checkDate.getDay();
+                
+                // If Tuesday (2)
+                if (day === 2) {
+                    const dateString = checkDate.toISOString().split('T')[0];
+                    const displayString = checkDate.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                    
+                    const option = document.createElement('option');
+                    option.value = dateString;
+                    option.textContent = displayString;
+                    dateSelect.appendChild(option);
+                    
+                    tuesdaysAdded++;
+                }
+                daysChecked++;
+            }
+        }
+
+        populateWeekendDates();
+
+        function selectService(serviceType) {
+            document.querySelectorAll('.service-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            const clickedOption = document.getElementById('service-' + serviceType).closest('.service-option');
+            clickedOption.classList.add('selected');
+        }
+
+        function handleBooking(event) {
+            event.preventDefault();
+
+            const dateValue = document.getElementById('appointmentDate').value;
+            const timeValue = document.getElementById('appointmentTime').value;
+            
+            if (!dateValue || !timeValue) {
+                alert('⚠️ Please select both a date and time for your appointment.');
+                return;
+            }
+
+            const appointmentDateTime = dateValue + 'T' + timeValue + ':00';
+            const selectedDate = new Date(appointmentDateTime);
+
+            // Check for conflicts with existing bookings (45 minute buffer AFTER)
+            const existingBookings = JSON.parse(localStorage.getItem('trashCanBookings') || '[]');
+            const selectedTime = selectedDate.getTime();
+            const fortyFiveMinutesInMs = 45 * 60 * 1000; // 45 minutes in milliseconds
+
+            for (const booking of existingBookings) {
+                if (booking.status === 'active' && booking.appointmentDateTime) {
+                    const bookedTime = new Date(booking.appointmentDateTime).getTime();
+                    
+                    if (selectedTime > bookedTime && selectedTime < (bookedTime + fortyFiveMinutesInMs)) {
+                        const bookedDateFormatted = new Date(booking.appointmentDateTime).toLocaleString('en-US', {
+                            weekday: 'short',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        alert('⚠️ This time slot is unavailable. There is already a booking at ' + bookedDateFormatted + '. Please select a time at least 45 minutes after this appointment.');
+                        return;
+                    }
+                }
+            }
+
+            const serviceRadio = document.querySelector('input[name="service"]:checked');
+            const serviceName = serviceRadio.value;
+            const serviceLabels = {
+                'a': 'Package A - Single Can - $15',
+                'b': 'Package B - Two Cans - $25'
+            };
+
+            const bookingData = {
+                id: Date.now(),
+                firstName: document.getElementById('firstName').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                service: serviceLabels[serviceName],
+                appointmentDateTime: appointmentDateTime,
+                notes: document.getElementById('notes').value,
+                status: 'active'
+            };
+
+            existingBookings.push(bookingData);
+            localStorage.setItem('trashCanBookings', JSON.stringify(existingBookings));
+
+            // Send email notification
+            const formattedDateTime = selectedDate.toLocaleString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const emailParams = {
+                customer_name: bookingData.firstName,
+                customer_email: document.getElementById('email').value,
+                customer_phone: bookingData.phone,
+                service_type: serviceLabels[serviceName],
+                address: bookingData.address,
+                appointment_datetime: formattedDateTime,
+                notes: bookingData.notes || 'None'
+            };
+
+            if (typeof emailjs !== 'undefined') {
+                emailjs.send('service_gq3je1g', 'template_bdusmop', emailParams)
+                    .then(function(response) {
+                        console.log('✅ Email sent successfully!', response.status, response.text);
+                    }, function(error) {
+                        console.error('❌ Email failed to send:', error);
+                    });
+            }
+
+            const successMsg = document.getElementById('successMessage');
+            successMsg.innerHTML = '✓ Booking confirmed! Your <strong>' + serviceLabels[serviceName] + '</strong> is scheduled. We\'ll see you soon!';
+            successMsg.classList.add('show');
+            
+            document.getElementById('bookingForm').reset();
+            document.querySelectorAll('.service-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 8000);
+        }
+    </script>
+</body>
+</html>
