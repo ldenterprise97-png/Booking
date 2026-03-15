@@ -5,19 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service CRM - Combined Dashboard</title>
     <style>
+        /* Password Screen */
+        .password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom right, #0f172a, #1e293b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+ 
+        .password-screen.hidden {
+            display: none;
+        }
+ 
+        .password-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 3rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+ 
+        .password-box h2 {
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+ 
+        .password-box input {
+            width: 100%;
+            padding: 0.75rem;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+ 
+        .password-box input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+ 
+        .password-box button {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(to right, #3b82f6, #06b6d4);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+ 
+        .password-box button:hover {
+            opacity: 0.9;
+        }
+ 
+        .password-error {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+ 
+        .password-error.show {
+            display: block;
+        }
+ 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+ 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(to bottom right, #0f172a, #1e293b);
             min-height: 100vh;
             color: #e2e8f0;
         }
-
+ 
         .header {
             background: #1e293b;
             border-bottom: 1px solid #334155;
@@ -29,17 +106,17 @@
             top: 0;
             z-index: 100;
         }
-
+ 
         .logo-section {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
-
+ 
         .logo {
             font-size: 2rem;
         }
-
+ 
         .header h1 {
             font-size: 1.5rem;
             background: linear-gradient(to right, #3b82f6, #10b981);
@@ -47,13 +124,13 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
+ 
         .main {
             max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
-
+ 
         /* Tabs */
         .tabs {
             display: flex;
@@ -61,7 +138,7 @@
             margin-bottom: 2rem;
             border-bottom: 2px solid #334155;
         }
-
+ 
         .tab {
             padding: 1rem 2rem;
             background: transparent;
@@ -73,57 +150,57 @@
             border-bottom: 3px solid transparent;
             transition: all 0.2s;
         }
-
+ 
         .tab:hover {
             color: #e2e8f0;
         }
-
+ 
         .tab.active {
             color: #60a5fa;
             border-bottom-color: #3b82f6;
         }
-
+ 
         .tab-content {
             display: none;
         }
-
+ 
         .tab-content.active {
             display: block;
         }
-
+ 
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-
+ 
         .stat-card {
             background: #1e293b;
             border: 1px solid #334155;
             border-radius: 0.75rem;
             padding: 1.5rem;
         }
-
+ 
         .stat-label {
             color: #94a3b8;
             font-size: 0.875rem;
             margin-bottom: 0.5rem;
         }
-
+ 
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
             color: #60a5fa;
         }
-
+ 
         .controls {
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
             flex-wrap: wrap;
         }
-
+ 
         .btn {
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
@@ -132,34 +209,34 @@
             border: none;
             transition: all 0.2s;
         }
-
+ 
         .btn-primary {
             background: linear-gradient(to right, #3b82f6, #06b6d4);
             color: white;
         }
-
+ 
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
         }
-
+ 
         .btn-complete {
             background: #059669;
             color: white;
             padding: 0.5rem 1rem;
             font-size: 0.875rem;
         }
-
+ 
         .btn-complete:hover {
             background: #047857;
         }
-
+ 
         .search-box {
             flex: 1;
             min-width: 250px;
             max-width: 400px;
         }
-
+ 
         .search-box input {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -169,17 +246,17 @@
             color: white;
             font-size: 1rem;
         }
-
+ 
         .search-box input:focus {
             outline: none;
             border-color: #3b82f6;
         }
-
+ 
         .filter-btns {
             display: flex;
             gap: 0.5rem;
         }
-
+ 
         .filter-btn {
             padding: 0.75rem 1.25rem;
             background: #0f172a;
@@ -189,18 +266,18 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-
+ 
         .filter-btn.active {
             background: #3b82f6;
             color: white;
             border-color: #3b82f6;
         }
-
+ 
         .customers-grid {
             display: grid;
             gap: 1.5rem;
         }
-
+ 
         .customer-card {
             background: #1e293b;
             border: 1px solid #334155;
@@ -208,31 +285,31 @@
             padding: 1.5rem;
             transition: all 0.2s;
         }
-
+ 
         .customer-card:hover {
             border-color: #3b82f6;
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
         }
-
+ 
         .customer-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 1rem;
         }
-
+ 
         .customer-title {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-bottom: 0.75rem;
         }
-
+ 
         .customer-name {
             font-size: 1.25rem;
             font-weight: 600;
             color: #e2e8f0;
         }
-
+ 
         .status-badge {
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
@@ -240,23 +317,23 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-
+ 
         .status-active {
             background: rgba(34, 197, 94, 0.2);
             color: #4ade80;
         }
-
+ 
         .status-completed {
             background: rgba(148, 163, 184, 0.2);
             color: #94a3b8;
         }
-
+ 
         .customer-actions {
             display: flex;
             gap: 0.5rem;
             align-items: flex-start;
         }
-
+ 
         .icon-btn {
             padding: 0.5rem;
             background: #0f172a;
@@ -266,17 +343,17 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-
+ 
         .icon-btn:hover {
             color: #3b82f6;
             border-color: #3b82f6;
         }
-
+ 
         .customer-details {
             display: grid;
             gap: 0.75rem;
         }
-
+ 
         .detail-item {
             display: flex;
             align-items: flex-start;
@@ -284,12 +361,12 @@
             color: #cbd5e1;
             font-size: 0.875rem;
         }
-
+ 
         .detail-icon {
             flex-shrink: 0;
             width: 1.25rem;
         }
-
+ 
         .modal {
             display: none;
             position: fixed;
@@ -303,11 +380,11 @@
             justify-content: center;
             padding: 1rem;
         }
-
+ 
         .modal.show {
             display: flex;
         }
-
+ 
         .modal-content {
             background: #1e293b;
             border: 1px solid #334155;
@@ -318,20 +395,20 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-
+ 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
         }
-
+ 
         .modal-title {
             font-size: 1.5rem;
             font-weight: 700;
             color: #e2e8f0;
         }
-
+ 
         .close-btn {
             background: none;
             border: none;
@@ -340,26 +417,26 @@
             cursor: pointer;
             padding: 0.25rem;
         }
-
+ 
         .close-btn:hover {
             color: #e2e8f0;
         }
-
+ 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
             margin-bottom: 1rem;
         }
-
+ 
         .form-group {
             margin-bottom: 1rem;
         }
-
+ 
         .form-group.full-width {
             grid-column: 1 / -1;
         }
-
+ 
         .form-group label {
             display: block;
             color: #cbd5e1;
@@ -367,7 +444,7 @@
             font-weight: 500;
             margin-bottom: 0.5rem;
         }
-
+ 
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -380,59 +457,59 @@
             font-size: 1rem;
             font-family: inherit;
         }
-
+ 
         .form-group textarea {
             resize: vertical;
             min-height: 80px;
         }
-
+ 
         .form-actions {
             display: flex;
             gap: 1rem;
             justify-content: flex-end;
             margin-top: 1.5rem;
         }
-
+ 
         .btn-secondary {
             background: #334155;
             color: #e2e8f0;
         }
-
+ 
         .btn-secondary:hover {
             background: #475569;
         }
-
+ 
         .btn-danger {
             background: #dc2626;
             color: white;
         }
-
+ 
         .btn-danger:hover {
             background: #b91c1c;
         }
-
+ 
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
-
+ 
             .header {
                 flex-direction: column;
                 gap: 1rem;
             }
-
+ 
             .controls {
                 flex-direction: column;
             }
-
+ 
             .search-box {
                 max-width: 100%;
             }
-
+ 
             .tabs {
                 overflow-x: auto;
             }
-
+ 
             .tab {
                 white-space: nowrap;
             }
@@ -440,6 +517,17 @@
     </style>
 </head>
 <body>
+    <!-- Password Protection Screen -->
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-box">
+            <h2>🔒 CRM Login</h2>
+            <p style="color: #94a3b8; margin-bottom: 1.5rem;">Enter password to access dashboard</p>
+            <input type="password" id="passwordInput" placeholder="Enter password" onkeypress="if(event.key==='Enter') checkPassword()">
+            <button onclick="checkPassword()">Unlock</button>
+            <div class="password-error" id="passwordError">❌ Incorrect password</div>
+        </div>
+    </div>
+ 
     <div class="header">
         <div class="logo-section">
             <div class="logo">✨</div>
@@ -447,14 +535,14 @@
         </div>
         <button class="btn btn-primary" onclick="openAddModal()">+ Add Booking</button>
     </div>
-
+ 
     <div class="main">
         <!-- Tabs -->
         <div class="tabs">
             <button class="tab active" onclick="switchTab('carwash')">🚗 Car Wash</button>
             <button class="tab" onclick="switchTab('trashcan')">🗑️ Trash Can Cleaning</button>
         </div>
-
+ 
         <!-- Car Wash Tab -->
         <div id="carwash-tab" class="tab-content active">
             <div class="stats">
@@ -463,7 +551,7 @@
                     <div class="stat-value" id="carwashTotal">0</div>
                 </div>
             </div>
-
+ 
             <div class="controls">
                 <div class="search-box">
                     <input type="text" id="carwashSearch" placeholder="Search by name, phone..." oninput="filterCustomers('carwash')">
@@ -474,10 +562,10 @@
                     <button class="filter-btn" onclick="setFilter('carwash', 'completed')">Completed</button>
                 </div>
             </div>
-
+ 
             <div class="customers-grid" id="carwashGrid"></div>
         </div>
-
+ 
         <!-- Trash Can Tab -->
         <div id="trashcan-tab" class="tab-content">
             <div class="stats">
@@ -486,7 +574,7 @@
                     <div class="stat-value" id="trashcanTotal">0</div>
                 </div>
             </div>
-
+ 
             <div class="controls">
                 <div class="search-box">
                     <input type="text" id="trashcanSearch" placeholder="Search by name, phone, address..." oninput="filterCustomers('trashcan')">
@@ -497,11 +585,11 @@
                     <button class="filter-btn" onclick="setFilter('trashcan', 'completed')">Completed</button>
                 </div>
             </div>
-
+ 
             <div class="customers-grid" id="trashcanGrid"></div>
         </div>
     </div>
-
+ 
     <!-- Modal -->
     <div class="modal" id="customerModal">
         <div class="modal-content">
@@ -526,7 +614,7 @@
                         <input type="email" id="email" required>
                     </div>
                 </div>
-
+ 
                 <!-- Car Wash Specific Fields -->
                 <div id="carwashFields" style="display:none;">
                     <div class="form-group full-width">
@@ -557,7 +645,7 @@
                         </div>
                     </div>
                 </div>
-
+ 
                 <!-- Trash Can Specific Fields -->
                 <div id="trashcanFields" style="display:none;">
                     <div class="form-group full-width">
@@ -580,7 +668,7 @@
                         </div>
                     </div>
                 </div>
-
+ 
                 <div class="form-group full-width">
                     <label>Status</label>
                     <select id="status">
@@ -600,29 +688,62 @@
             </form>
         </div>
     </div>
-
+ 
     <script>
+        // PASSWORD PROTECTION
+        // Change this password to whatever you want!
+        const CORRECT_PASSWORD = "admin123";
+ 
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const error = document.getElementById('passwordError');
+            
+            if (input === CORRECT_PASSWORD) {
+                // Correct password - hide password screen and show CRM
+                document.getElementById('passwordScreen').classList.add('hidden');
+                // Store in session so they don't have to login again during this session
+                sessionStorage.setItem('crmAuthenticated', 'true');
+                init();
+            } else {
+                // Wrong password - show error
+                error.classList.add('show');
+                document.getElementById('passwordInput').value = '';
+                setTimeout(() => {
+                    error.classList.remove('show');
+                }, 3000);
+            }
+        }
+ 
+        // Check if already authenticated this session
+        window.addEventListener('load', function() {
+            if (sessionStorage.getItem('crmAuthenticated') === 'true') {
+                document.getElementById('passwordScreen').classList.add('hidden');
+                init();
+            }
+        });
+ 
+        // REST OF THE CODE
         let carwashCustomers = [];
         let trashcanCustomers = [];
         let currentTab = 'carwash';
         let currentFilter = { carwash: 'all', trashcan: 'all' };
         let editingCustomerId = null;
-
+ 
         function init() {
             loadData();
             renderAll();
         }
-
+ 
         function loadData() {
             carwashCustomers = JSON.parse(localStorage.getItem('carWashBookings') || '[]');
             trashcanCustomers = JSON.parse(localStorage.getItem('trashCanBookings') || '[]');
         }
-
+ 
         function saveData() {
             localStorage.setItem('carWashBookings', JSON.stringify(carwashCustomers));
             localStorage.setItem('trashCanBookings', JSON.stringify(trashcanCustomers));
         }
-
+ 
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -630,18 +751,18 @@
             event.target.classList.add('active');
             document.getElementById(tab + '-tab').classList.add('active');
         }
-
+ 
         function renderAll() {
             renderCustomers('carwash');
             renderCustomers('trashcan');
             updateStats();
         }
-
+ 
         function updateStats() {
             document.getElementById('carwashTotal').textContent = carwashCustomers.length;
             document.getElementById('trashcanTotal').textContent = trashcanCustomers.length;
         }
-
+ 
         function formatDateTime(isoString) {
             if (!isoString) return 'N/A';
             const date = new Date(isoString);
@@ -653,7 +774,7 @@
                 minute: '2-digit'
             });
         }
-
+ 
         function setFilter(service, filter) {
             currentFilter[service] = filter;
             const buttons = document.querySelector(`#${service}-tab .filter-btns`).querySelectorAll('.filter-btn');
@@ -661,11 +782,11 @@
             event.target.classList.add('active');
             renderCustomers(service);
         }
-
+ 
         function filterCustomers(service) {
             renderCustomers(service);
         }
-
+ 
         function toggleAddressField() {
             const location = document.getElementById('location').value;
             const addressField = document.getElementById('crmAddressField');
@@ -678,7 +799,7 @@
                 addressInput.value = '';
             }
         }
-
+ 
         function markComplete(service, id) {
             const customers = service === 'carwash' ? carwashCustomers : trashcanCustomers;
             const customer = customers.find(c => c.id === id);
@@ -688,13 +809,13 @@
                 renderCustomers(service);
             }
         }
-
+ 
         function renderCustomers(service) {
             const customers = service === 'carwash' ? carwashCustomers : trashcanCustomers;
             const searchTerm = document.getElementById(service + 'Search').value.toLowerCase();
             const grid = document.getElementById(service + 'Grid');
             const filter = currentFilter[service];
-
+ 
             const filtered = customers.filter(c => {
                 const matchesSearch = c.firstName.toLowerCase().includes(searchTerm) ||
                                     c.phone.includes(searchTerm) ||
@@ -702,12 +823,12 @@
                 const matchesFilter = filter === 'all' || c.status === filter;
                 return matchesSearch && matchesFilter;
             });
-
+ 
             if (filtered.length === 0) {
                 grid.innerHTML = '<div style="text-align: center; padding: 3rem; color: #64748b;">No bookings found</div>';
                 return;
             }
-
+ 
             grid.innerHTML = filtered.map(c => `
                 <div class="customer-card">
                     <div class="customer-header">
@@ -765,7 +886,7 @@
                 </div>
             `).join('');
         }
-
+ 
         function openAddModal() {
             editingCustomerId = null;
             document.getElementById('modalTitle').textContent = 'Add Booking';
@@ -783,16 +904,16 @@
             
             document.getElementById('customerModal').classList.add('show');
         }
-
+ 
         function closeModal() {
             document.getElementById('customerModal').classList.remove('show');
         }
-
+ 
         function editCustomer(service, id) {
             const customers = service === 'carwash' ? carwashCustomers : trashcanCustomers;
             const customer = customers.find(c => c.id === id);
             if (!customer) return;
-
+ 
             editingCustomerId = id;
             document.getElementById('modalTitle').textContent = 'Edit Booking';
             document.getElementById('serviceType').value = service;
@@ -801,7 +922,7 @@
             document.getElementById('email').value = customer.email || '';
             document.getElementById('status').value = customer.status;
             document.getElementById('notes').value = customer.notes || '';
-
+ 
             if (service === 'carwash') {
                 document.getElementById('carwashFields').style.display = 'block';
                 document.getElementById('trashcanFields').style.display = 'none';
@@ -817,11 +938,11 @@
                 document.getElementById('trashcanService').value = customer.service || '';
                 document.getElementById('trashcanDateTime').value = customer.appointmentDateTime || '';
             }
-
+ 
             document.getElementById('deleteBtn').style.display = 'block';
             document.getElementById('customerModal').classList.add('show');
         }
-
+ 
         function saveCustomer(event) {
             event.preventDefault();
             
@@ -833,7 +954,7 @@
                 status: document.getElementById('status').value,
                 notes: document.getElementById('notes').value
             };
-
+ 
             if (service === 'carwash') {
                 customerData.location = document.getElementById('location').value;
                 customerData.address = document.getElementById('crmAddress').value;
@@ -844,9 +965,9 @@
                 customerData.service = document.getElementById('trashcanService').value;
                 customerData.appointmentDateTime = document.getElementById('trashcanDateTime').value;
             }
-
+ 
             const customers = service === 'carwash' ? carwashCustomers : trashcanCustomers;
-
+ 
             if (editingCustomerId) {
                 const index = customers.findIndex(c => c.id === editingCustomerId);
                 customers[index] = { ...customers[index], ...customerData };
@@ -854,12 +975,12 @@
                 customerData.id = Date.now();
                 customers.push(customerData);
             }
-
+ 
             saveData();
             renderAll();
             closeModal();
         }
-
+ 
         function deleteCustomer() {
             if (!confirm('Are you sure you want to delete this booking?')) return;
             
@@ -869,13 +990,13 @@
             } else {
                 trashcanCustomers = trashcanCustomers.filter(c => c.id !== editingCustomerId);
             }
-
+ 
             saveData();
             renderAll();
             closeModal();
         }
-
-        init();
+ 
+        // Don't call init() here anymore - it's called after password check
     </script>
 </body>
 </html>
